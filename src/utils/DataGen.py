@@ -59,7 +59,7 @@ class DataGen:
         for index, category in enumerate(categories):
             path = os.path.join(data_dir, category)  # path to every alphabet
             # path name leading to the alphabet directory
-            print("Opening directory {} from path: {}".format(str(category), str(path)))
+            self.logger.info("Opening directory {} from path: {}".format(str(category), str(path)))
 
             # loop over all the images in the directory
             for img in os.listdir(path):

@@ -1,6 +1,7 @@
 import torch, warnings, torchvision, os, h5py, time, yaml, datetime, logging
-from metrics import *
 from utils.DataGen import DataGen
+import numpy as np
+from torchvision.utils import save_image
 
 # only A and B
 categories = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
@@ -108,6 +109,19 @@ class Main(DataGen):
         self.logger.log("Number of testing samples: {}".format(str(test_data_size)))
         self.logger.log("{} batches each having 64 samples".format(str(num_test_data_batches)))
 
+        # export a subset of images
+        batch = next(iter(self.data["train_dataloader"]))
+        images, labels = batch
+
+        grid = torchvision.utils.make_grid(images[:64], nrow=8)
+        print(type(grid))
+        plt.figure(figsize=(10, 10))
+        np.transpose(grid, (1, 2, 0))
+        save_image(grid, 'grid.png')
+        for data, target in self.data["train_dataloader"]:
+            print("Batch image tensor dimensions: ", data.shape)
+            print("Batch label tensor dimensions: ", target.shape)
+            break
         # # get current and data directories (train and test)
         # current_dir, train_data_dir, test_data_dir = data_dirs(__file__)
         #

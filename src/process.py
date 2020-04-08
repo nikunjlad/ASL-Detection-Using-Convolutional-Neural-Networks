@@ -69,10 +69,10 @@ class ProcessData:
 def generate_h5(Xtr, ytr, Xtst, ytst, filename):
     print("Generating H5 file...")
     hf = h5py.File(filename, 'w')
-    hf.create_dataset('X_train', data=Xtr)
-    hf.create_dataset('y_train', data=ytr)
-    hf.create_dataset('X_test', data=Xtst)
-    hf.create_dataset('y_test', data=ytst)
+    hf.create_dataset('X_train', data=Xtr, compression="gzip")
+    hf.create_dataset('y_train', data=ytr, compression="gzip")
+    hf.create_dataset('X_test', data=Xtst, compression="gzip")
+    hf.create_dataset('y_test', data=ytst, compression="gzip")
     hf.close()
     print("{} file generated".format(filename))
 

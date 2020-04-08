@@ -1,7 +1,9 @@
 import torch, warnings, torchvision, os, h5py, time, yaml, datetime, logging
 from utils.DataGen import DataGen
 import numpy as np
+from process import Process
 from torchvision.utils import save_image
+import matplotlib.pyplot as plt
 
 # only A and B
 categories = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
@@ -21,7 +23,7 @@ class Main(DataGen):
 
         self.current_time = datetime.datetime.now().strftime("%Y-%m-%d  %H.%M")  # get current datetime
         if not os.path.exists("logs"):
-            os.mkdir("logs")   # make log directory if does not exist
+            os.mkdir("logs")  # make log directory if does not exist
         os.chdir("logs")  # change to logs directory
         # getting the custom logger
         self.logger_name = "asl_" + self.current_time + "_.log"
@@ -34,14 +36,19 @@ class Main(DataGen):
 
     @staticmethod
     def get_loggers(name):
-        logger = logging.getLogger("asl")  # name the logger as asl
+        logger = logging.getLogger()  # name the logger as asl
         logger.setLevel(logging.DEBUG)
-        f_hand = logging.FileHandler(name)     # file where the custom logs needs to be handled
-        f_hand.setLevel(logging.INFO)        # level to set for logging the errors
+        f_hand = logging.FileHandler(name)  # file where the custom logs needs to be handled
+        f_hand.setLevel(logging.DEBUG)  # level to set for logging the errors
         f_format = logging.Formatter('%(asctime)s : %(process)d : %(levelname)s : %(message)s',
                                      datefmt='%d-%b-%y %H:%M:%S')  # format in which the logs needs to be written
         f_hand.setFormatter(f_format)  # setting the format of the logs
         logger.addHandler(f_hand)  # setting the logging handler with the above formatter specification
+
+        ch = logging.StreamHandler()
+        ch.setLevel(logging.DEBUG)
+        ch.setFormatter(f_format)
+        logger.addHandler(ch)
 
         return logger
 
@@ -49,10 +56,11 @@ class Main(DataGen):
     def configure_cuda(self, device_id):
         self.train_on_gpu = torch.cuda.is_available()
         if not self.train_on_gpu:
-            print('CUDA is not available. Training on CPU ...')
+            self.logger.info('CUDA is not available. Training on CPU ...')
         else:
             torch.cuda.set_device(device_id)
-            print('CUDA is available! Training on Tesla T4 Device {}'.format(str(torch.cuda.current_device())))
+            self.logger.info(
+                'CUDA is available! Training on Tesla T4 Device {}'.format(str(torch.cuda.current_device())))
 
     # def data_dirs(filename):
     #     """
@@ -71,7 +79,7 @@ class Main(DataGen):
     def main(self):
         """
         This is the wrapper function which calls and generates data from other classes and helper functions
-        :return: does specifically return anything.
+        :return: main program execution
         """
 
         # configure GPU if available
@@ -83,15 +91,19 @@ class Main(DataGen):
         if os.getenv("HOME") != self.config["DATALOADER"]["DATA_DIR"]:
             self.config["DATALOADER"]["DATA_DIR"] = os.getenv("HOME")
 
+        classes = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+                   'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+                   'space', 'nothing', 'del']
+
         # loading data
         data_path = os.path.join(self.config["DATALOADER"]["DATA_DIR"], "data/asl/alphabets.h5")
-        self.load_data(data_path)
+        # p = Process(data_path, classes)
+        # data = p.data_from_dirs(data_path, categories)  # acquire all the data.
+        # x_train, y_train, x_test, y_test = p.split_data(data, 0.98)
+
+        self.load_data_from_h5(data_path)
         self.split_data()
         self.configure_dataloaders()
-
-        classes = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
-                      'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-                      'space', 'nothing', 'del']
 
         # get training, validation and testing dataset sizes and number of batches in each
         train_data_size = len(self.data["train_dataset"])

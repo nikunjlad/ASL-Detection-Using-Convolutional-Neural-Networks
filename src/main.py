@@ -171,13 +171,13 @@ class Main(DataGen):
 
                 # Forward pass - compute outputs on input data using the model
                 outputs = net(inputs)
-                self.logger.debug("Output of the model: {}".format(str(outputs)))
-                self.logger.debug("Output shape: {}".format(str(outputs.shape)))
+                # self.logger.debug("Output of the model: {}".format(str(outputs)))
+                # self.logger.debug("Output shape: {}".format(str(outputs.shape)))
 
                 # Compute loss
                 loss = criterion(outputs, labels)
-                self.logger.debug("Loss: {}".format(str(loss)))
-                self.logger.debug("Loss shape: {}".format(str(loss.shape)))
+                # self.logger.debug("Loss: {}".format(str(loss)))
+                # self.logger.debug("Loss shape: {}".format(str(loss.shape)))
 
                 # Backpropagate the gradients
                 loss.backward()
@@ -187,7 +187,7 @@ class Main(DataGen):
 
                 # Compute the total loss for the batch and add it to train_loss
                 train_loss += loss.item() * inputs.size(0)
-                self.logger.debug(str(train_loss))
+                # self.logger.debug(str(train_loss))
 
                 # Compute the accuracy
                 ret, predictions = torch.max(outputs.data, 1)
@@ -255,6 +255,7 @@ class Main(DataGen):
                         Accuracy: {:.4f}%, Time: {:.4f}s".format(epoch, avg_train_loss,
                                                                  avg_train_acc * 100, avg_valid_loss,
                                                                  avg_valid_acc * 100, epoch_end - epoch_start))
+            print("-" * 89)
 
 if __name__ == '__main__':
     m = Main()

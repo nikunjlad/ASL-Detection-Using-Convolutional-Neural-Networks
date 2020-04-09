@@ -27,6 +27,6 @@ class Net(nn.Module):
         x = x.view(-1, 16 * 16 * 4)
         x = F.relu(self.fc1(x))
         x = self.dropout(x)
-        x = F.softmax(self.fc2(x), dim=1)
+        x = F.relu(self.fc2(x))
         return x
 

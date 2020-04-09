@@ -198,7 +198,7 @@ class Main(DataGen):
                 print("Batch number: {:03d}, Training: Loss: {:.4f}, Accuracy: {:.4f}".format(i, loss.item(),
                                                                                               acc.item() * 100))
 
-                
+                break
 
 
 if __name__ == '__main__':

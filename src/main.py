@@ -6,7 +6,7 @@ import torch.nn as nn
 from torchvision.utils import save_image
 import matplotlib
 import torch.backends.cudnn as cudnn
-
+from tqdm import tqdm
 matplotlib.use("TkAgg")
 from model import Net
 import matplotlib.pyplot as plt

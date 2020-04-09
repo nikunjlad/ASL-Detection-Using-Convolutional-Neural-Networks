@@ -28,5 +28,6 @@ class Net(nn.Module):
         x = F.relu(self.fc1(x))
         x = self.dropout(x)
         x = F.relu(self.fc2(x))
+        print(x.shape)
         return x
 

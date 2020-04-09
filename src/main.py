@@ -92,40 +92,40 @@ class Main(DataGen):
         # loading data
         data_path = os.path.join(self.config["DATALOADER"]["DATA_DIR"], "data/asl/alphabets.h5")
 
-        # self.load_data_from_h5(data_path)
-        # self.split_data()
-        # self.configure_dataloaders()
-        #
-        # # get training, validation and testing dataset sizes and number of batches in each
-        # train_data_size = len(self.data["train_dataset"])
-        # valid_data_size = len(self.data["valid_dataset"])
-        # test_data_size = len(self.data["test_dataset"])
-        # num_train_data_batches = len(self.data["train_dataloader"])
-        # num_valid_data_batches = len(self.data["valid_dataloader"])
-        # num_test_data_batches = len(self.data["test_dataloader"])
-        #
-        # # display batch information
-        # self.logger.info("Number of training samples: {}".format(str(train_data_size)))
-        # self.logger.info("{} batches each having 64 samples".format(str(num_train_data_batches)))
-        # self.logger.info("Number of validation samples: {}".format(str(valid_data_size)))
-        # self.logger.info("{} batches each having 64 samples".format(str(num_valid_data_batches)))
-        # self.logger.info("Number of testing samples: {}".format(str(test_data_size)))
-        # self.logger.info("{} batches each having 64 samples".format(str(num_test_data_batches)))
-        #
-        # # export a subset of images
-        # batch = next(iter(self.data["test_dataloader"]))
-        # images, labels = batch
-        #
-        # if self.config["HYPERPARAMETERS"]["PLOT_IMG"]:
-        #     grid = torchvision.utils.make_grid(images[:64], nrow=8)
-        #     self.logger.debug(type(grid))
-        #     plt.figure(figsize=(10, 10))
-        #     np.transpose(grid, (1, 2, 0))
-        #     save_image(grid, 'grid.png')
-        #     for data, target in self.data["test_dataloader"]:
-        #         self.logger.debug("Batch image tensor dimensions: {}".format(str(data.shape)))
-        #         self.logger.debug("Batch label tensor dimensions: {}".format(str(target.shape)))
-        #         break
+        self.load_data_from_h5(data_path)
+        self.split_data()
+        self.configure_dataloaders()
+
+        # get training, validation and testing dataset sizes and number of batches in each
+        train_data_size = len(self.data["train_dataset"])
+        valid_data_size = len(self.data["valid_dataset"])
+        test_data_size = len(self.data["test_dataset"])
+        num_train_data_batches = len(self.data["train_dataloader"])
+        num_valid_data_batches = len(self.data["valid_dataloader"])
+        num_test_data_batches = len(self.data["test_dataloader"])
+
+        # display batch information
+        self.logger.info("Number of training samples: {}".format(str(train_data_size)))
+        self.logger.info("{} batches each having 64 samples".format(str(num_train_data_batches)))
+        self.logger.info("Number of validation samples: {}".format(str(valid_data_size)))
+        self.logger.info("{} batches each having 64 samples".format(str(num_valid_data_batches)))
+        self.logger.info("Number of testing samples: {}".format(str(test_data_size)))
+        self.logger.info("{} batches each having 64 samples".format(str(num_test_data_batches)))
+
+        # export a subset of images
+        batch = next(iter(self.data["test_dataloader"]))
+        images, labels = batch
+
+        if self.config["HYPERPARAMETERS"]["PLOT_IMG"]:
+            grid = torchvision.utils.make_grid(images[:64], nrow=8)
+            self.logger.debug(type(grid))
+            plt.figure(figsize=(10, 10))
+            np.transpose(grid, (1, 2, 0))
+            save_image(grid, 'grid.png')
+            for data, target in self.data["test_dataloader"]:
+                self.logger.debug("Batch image tensor dimensions: {}".format(str(data.shape)))
+                self.logger.debug("Batch label tensor dimensions: {}".format(str(target.shape)))
+                break
 
         net = Net()
         self.logger.debug(str(net))

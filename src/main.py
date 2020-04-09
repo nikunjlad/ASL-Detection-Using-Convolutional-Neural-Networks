@@ -1,9 +1,12 @@
 import torch, warnings, torchvision, os, h5py, time, yaml, datetime, logging
 from utils.DataGen import DataGen
 import numpy as np
-from process import Process
+from torchvision import models
 from torchvision.utils import save_image
+import matplotlib
+matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
+
 
 # only A and B
 categories = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
@@ -106,18 +109,18 @@ class Main(DataGen):
         self.configure_dataloaders()
 
         # get training, validation and testing dataset sizes and number of batches in each
-        # train_data_size = len(self.data["train_dataset"])
-        # valid_data_size = len(self.data["valid_dataset"])
+        train_data_size = len(self.data["train_dataset"])
+        valid_data_size = len(self.data["valid_dataset"])
         test_data_size = len(self.data["test_dataset"])
-        # num_train_data_batches = len(self.data["train_dataloader"])
-        # num_valid_data_batches = len(self.data["valid_dataloader"])
+        num_train_data_batches = len(self.data["train_dataloader"])
+        num_valid_data_batches = len(self.data["valid_dataloader"])
         num_test_data_batches = len(self.data["test_dataloader"])
 
         # display batch information
-        # self.logger.info("Number of training samples: {}".format(str(train_data_size)))
-        # self.logger.info("{} batches each having 64 samples".format(str(num_train_data_batches)))
-        # self.logger.info("Number of validation samples: {}".format(str(valid_data_size)))
-        # self.logger.info("{} batches each having 64 samples".format(str(num_valid_data_batches)))
+        self.logger.info("Number of training samples: {}".format(str(train_data_size)))
+        self.logger.info("{} batches each having 64 samples".format(str(num_train_data_batches)))
+        self.logger.info("Number of validation samples: {}".format(str(valid_data_size)))
+        self.logger.info("{} batches each having 64 samples".format(str(num_valid_data_batches)))
         self.logger.info("Number of testing samples: {}".format(str(test_data_size)))
         self.logger.info("{} batches each having 64 samples".format(str(num_test_data_batches)))
 
@@ -125,15 +128,18 @@ class Main(DataGen):
         batch = next(iter(self.data["test_dataloader"]))
         images, labels = batch
 
-        grid = torchvision.utils.make_grid(images[:64], nrow=8)
-        self.logger.debug(type(grid))
-        plt.figure(figsize=(10, 10))
-        np.transpose(grid, (1, 2, 0))
-        save_image(grid, 'grid.png')
-        for data, target in self.data["test_dataloader"]:
-            self.logger.debug("Batch image tensor dimensions: {}".format(str(data.shape)))
-            self.logger.debug("Batch label tensor dimensions: {}".format(str(target.shape)))
-            break
+        if self.config["HYPERPARAMETERS"]["PLOT_IMG"]:
+            grid = torchvision.utils.make_grid(images[:64], nrow=8)
+            self.logger.debug(type(grid))
+            plt.figure(figsize=(10, 10))
+            np.transpose(grid, (1, 2, 0))
+            save_image(grid, 'grid.png')
+            for data, target in self.data["test_dataloader"]:
+                self.logger.debug("Batch image tensor dimensions: {}".format(str(data.shape)))
+                self.logger.debug("Batch label tensor dimensions: {}".format(str(target.shape)))
+                break
+
+
         # # get current and data directories (train and test)
         # current_dir, train_data_dir, test_data_dir = data_dirs(__file__)
         #

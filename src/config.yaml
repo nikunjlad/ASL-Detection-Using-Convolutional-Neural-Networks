@@ -52,6 +52,7 @@ HYPERPARAMETERS:
   GPU: True
   DEVICES: [2,3]
   PARALLEL: True
+  PLOT_IMG: False
 DATALOADER:
   DATA_DIR: "/Users/nikunjlad"
   VALIDATION_SPLIT: 0.1

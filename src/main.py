@@ -128,6 +128,8 @@ class Main(DataGen):
                 break
 
         net = Net()
+        if self.train_on_gpu:
+            net = net.cuda()
         self.logger.debug(str(net))
 
         if self.config["HYPERPARAMETERS"]["PARALLEL"]:

@@ -171,11 +171,13 @@ class Main(DataGen):
 
                 # Forward pass - compute outputs on input data using the model
                 outputs = net(inputs)
-                self.logger.debug(str(outputs))
+                self.logger.debug("Output of the model: {}".format(str(outputs)))
+                self.logger.debug("Output shape: {}".format(str(outputs.shape)))
 
                 # Compute loss
                 loss = criterion(outputs, labels)
-                self.logger.debug(str(loss))
+                self.logger.debug("Loss: {}".format(str(loss)))
+                self.logger.debug("Loss shape: {}".format(str(loss.shape)))
 
                 # Backpropagate the gradients
                 loss.backward()

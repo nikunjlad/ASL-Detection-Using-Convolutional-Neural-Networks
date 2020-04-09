@@ -6,9 +6,11 @@ import torch.nn as nn
 from torchvision.utils import save_image
 import matplotlib
 import torch.backends.cudnn as cudnn
+
 matplotlib.use("TkAgg")
 from model import Net
 import matplotlib.pyplot as plt
+
 warnings.filterwarnings('ignore')
 
 # only A and B
@@ -135,6 +137,69 @@ class Main(DataGen):
         criterion = nn.CrossEntropyLoss()
         optimizer = optim.SGD(net.parameters(),
                               lr=self.config["HYPERPARAMETERS"]["LR"], momentum=0.9, weight_decay=5e-4)
+
+        # training and validation loop
+        epochs = self.config["HYPERPARAMETERS"]["EPOCHS"]
+        history = list()
+        train_time = time.time()
+
+        for epoch in range(epochs):
+            epoch_start = time.time()  # start time for the epoch
+            print("Epoch: {}/{}".format(epoch + 1, epochs))
+
+            # Set to training mode
+            net.train()
+
+            # Loss and Accuracy within the epoch
+            train_loss = 0.0
+            train_acc = 0.0
+
+            valid_loss = 0.0
+            valid_acc = 0.0
+
+            for i, (inputs, labels) in enumerate(self.data["train_dataloader"]):
+
+                # if GPU mentioned.
+                if self.train_on_gpu:
+                    inputs = inputs.cuda()
+                    labels = labels.cuda()
+
+                # Clean existing gradients
+                optimizer.zero_grad()
+
+                # Forward pass - compute outputs on input data using the model
+                outputs = net(inputs)
+                self.logger.debug(str(outputs))
+
+                # Compute loss
+                loss = criterion(outputs, labels)
+                self.logger.debug(str(loss))
+
+                # Backpropagate the gradients
+                loss.backward()
+
+                # Update the parameters
+                optimizer.step()
+
+                # Compute the total loss for the batch and add it to train_loss
+                train_loss += loss.item() * inputs.size(0)
+                self.logger.debug(str(train_loss))
+
+                # Compute the accuracy
+                ret, predictions = torch.max(outputs.data, 1)
+                correct_counts = predictions.eq(labels.data.view_as(predictions))
+
+                # Convert correct_counts to float and then compute the mean
+                acc = torch.mean(correct_counts.type(torch.FloatTensor))
+
+                # Compute total accuracy in the whole batch and add to train_acc
+                train_acc += acc.item() * inputs.size(0)
+
+                print("Batch number: {:03d}, Training: Loss: {:.4f}, Accuracy: {:.4f}".format(i, loss.item(),
+                                                                                              acc.item() * 100))
+
+                
+
 
 if __name__ == '__main__':
     m = Main()

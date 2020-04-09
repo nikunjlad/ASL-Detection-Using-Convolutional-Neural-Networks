@@ -108,7 +108,7 @@ class Process:
         print("Training labels shape: {}".format(str(y_train.shape)))
         print("Testing labels shape: {}".format(str(y_test.shape)))
 
-        return x_train, x_test, y_train, y_test
+        return x_train, y_train, x_test, y_test
 
     def data_from_dirs(self, data_dir, categories):
         """
@@ -129,7 +129,8 @@ class Process:
                 try:
                     # reading the image in original format
                     image = cv2.imread(os.path.join(path, img))
-                    image = cv2.resize(image, (100,100))
+                    image = cv2.resize(image, (150,150))
+                    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
                     data.append([image, index])  # append the [image, label] list in the data list
                 except Exception as e:
                     print(e)

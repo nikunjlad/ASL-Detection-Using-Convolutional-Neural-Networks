@@ -55,6 +55,7 @@ HYPERPARAMETERS:
   PLOT_IMG: False
 DATALOADER:
   DATA_DIR: "/Users/nikunjlad"
+  MODEL_PATH: "model.pt"
   VALIDATION_SPLIT: 0.1
   ONE_HOT_ENCODE: False
 

@@ -7,6 +7,7 @@ from torchvision.utils import save_image
 import matplotlib
 import torch.backends.cudnn as cudnn
 from tqdm import tqdm
+
 matplotlib.use("TkAgg")
 from model import Net
 import matplotlib.pyplot as plt
@@ -143,7 +144,8 @@ class Main(DataGen):
         # training and validation loop
         epochs = self.config["HYPERPARAMETERS"]["EPOCHS"]
         history = list()
-        train_time = time.time()
+        train_start = time.time()
+        best_val_loss = None
 
         for epoch in range(epochs):
             epoch_start = time.time()  # start time for the epoch
@@ -256,6 +258,15 @@ class Main(DataGen):
                                                                  avg_train_acc * 100, avg_valid_loss,
                                                                  avg_valid_acc * 100, epoch_end - epoch_start))
             print("-" * 89)
+
+            if not avg_valid_loss or avg_valid_loss < best_val_loss:
+                with open(self.config["DATALOADER"]["MODEL_PATH"], 'wb') as f:
+                    torch.save(net,
+                               f)  # keep saving the best model as and when the validation loss falls below best loss
+                best_val_loss = avg_train_loss  # new best loss is the recently found validation loss
+
+        train_stop = time.time()
+        self.logger.info("Time taken for training: {}".format(str(train_stop - train_start)))
 
 if __name__ == '__main__':
     m = Main()

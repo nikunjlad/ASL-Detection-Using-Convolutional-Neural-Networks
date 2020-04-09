@@ -201,6 +201,7 @@ class Main(DataGen):
                                                                                               acc.item() * 100))
 
                 break
+            break
 
 
 if __name__ == '__main__':

@@ -139,7 +139,9 @@ class Main(DataGen):
                 self.logger.debug("Batch label tensor dimensions: {}".format(str(target.shape)))
                 break
 
-
+        model = models.vgg16_bn(pretrained=True)
+        self.logger.debug(str(model))
+        
         # # get current and data directories (train and test)
         # current_dir, train_data_dir, test_data_dir = data_dirs(__file__)
         #

@@ -201,8 +201,8 @@ class Main(DataGen):
                 # Compute total accuracy in the whole batch and add to train_acc
                 train_acc += acc.item() * inputs.size(0)
 
-                print("Batch number: {:03d}, Training: Loss: {:.4f}, Accuracy: {:.4f}".format(i, loss.item(),
-                                                                                              acc.item() * 100))
+                print("Batch : {:03d}/{:03d}, Training: Loss: {:.4f}, \
+                        Accuracy: {:.4f}".format(i, train_data_size, loss.item(), acc.item() * 100))
 
             # Validation - No gradient tracking needed
             with torch.no_grad():
@@ -236,9 +236,8 @@ class Main(DataGen):
                     # Compute total accuracy in the whole batch and add to valid_acc
                     valid_acc += acc.item() * inputs.size(0)
 
-                    print("Validation Batch number: {:03d}, Validation: Loss: {:.4f}, Accuracy: {:.4f}".format(j,
-                                                                                                               loss.item(),
-                                                                                                               acc.item() * 100))
+                    print("Validation Batch number: {:03d}/{:03d}, Validation: Loss: {:.4f}, \
+                            Accuracy: {:.4f}".format(j, valid_data_size, loss.item(), acc.item() * 100))
 
             # Find average training loss and training accuracy
             avg_train_loss = train_loss / train_data_size
@@ -252,21 +251,53 @@ class Main(DataGen):
 
             epoch_end = time.time()
             print("-" * 89)
-            print("Epoch : {:03d}, Training: Loss: {:.4f}, \
-                        Accuracy: {:.4f}%, \n\t\tValidation : Loss : {:.4f}, \
-                        Accuracy: {:.4f}%, Time: {:.4f}s".format(epoch, avg_train_loss,
-                                                                 avg_train_acc * 100, avg_valid_loss,
-                                                                 avg_valid_acc * 100, epoch_end - epoch_start))
+            print("Epoch : {:03d}, Training: Loss: {:.4f}, Accuracy: {:.4f}%, Validation : Loss : {:.4f}, \
+                        Accuracy: {:.4f}%, Time: {:.4f}s".format(epoch + 1, avg_train_loss, avg_train_acc * 100,
+                                                                 avg_valid_loss, avg_valid_acc * 100,
+                                                                 epoch_end - epoch_start))
             print("-" * 89)
 
             if not avg_valid_loss or avg_valid_loss < best_val_loss:
                 with open(self.config["DATALOADER"]["MODEL_PATH"], 'wb') as f:
-                    torch.save(net,
-                               f)  # keep saving the best model as and when the validation loss falls below best loss
+                    # keep saving the best model as and when the validation loss falls below best loss
+                    print("\nPrevious loss: {:.4f}, \
+                            Best Loss: {:.4f}, saving best model...\n".format(best_val_loss, avg_valid_loss))
+                    torch.save(net, f)
                 best_val_loss = avg_train_loss  # new best loss is the recently found validation loss
 
         train_stop = time.time()
         self.logger.info("Time taken for training: {}".format(str(train_stop - train_start)))
+
+        # saving model once training is done
+        torch.save(net.state_dict(), 'asl.pt')  # save the resnet model
+        hist = np.array(history)  # convert history from list to numpy array
+
+        # training and validation loss curves
+        plt.figure(figsize=(12, 12))
+        x = [i for i in range(0, epochs)]
+        plt.plot(x, hist[:, 0])
+        plt.plot(x, hist[:, 1])
+        plt.legend(['train_loss', 'valid_loss'], loc='upper right')
+        plt.xlabel("Epochs")
+        plt.ylabel("Cross-Entropy Loss")
+        plt.title("Loss Curves")
+        plt.xlim(0, 50)
+        fig = plt.gcf()
+        fig.savefig("train_valid_loss_1.png")
+
+        # training and validation accuracy curves
+        plt.figure(figsize=(12, 12))
+        x = [i for i in range(0, epochs)]
+        plt.plot(x, hist[:, 2])
+        plt.plot(x, hist[:, 3])
+        plt.legend(['train_acc', 'valid_acc'], loc='upper right')
+        plt.xlabel("Epochs")
+        plt.ylabel("Accuracy")
+        plt.title("Accuracy Curves")
+        plt.xlim(0, 50)
+        fig = plt.gcf()
+        fig.savefig("train_valid_accuracy_1.png")
+
 
 if __name__ == '__main__':
     m = Main()

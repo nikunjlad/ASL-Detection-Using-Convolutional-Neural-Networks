@@ -6,7 +6,6 @@ import torch.nn as nn
 from torchvision.utils import save_image
 import matplotlib
 import torch.backends.cudnn as cudnn
-from tqdm import tqdm
 
 matplotlib.use("TkAgg")
 from model import Net
@@ -246,12 +245,12 @@ class Main(DataGen):
             scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, num_train_data_batches, eta_min=0)
 
             # Find average training loss and training accuracy
-            avg_train_loss = train_loss / train_data_size
-            avg_train_acc = train_acc / float(train_data_size)
+            avg_train_loss = train_loss / num_train_data_batches
+            avg_train_acc = train_acc / num_train_data_batches
 
             # Find average training loss and training accuracy
-            avg_valid_loss = valid_loss / valid_data_size
-            avg_valid_acc = valid_acc / float(valid_data_size)
+            avg_valid_loss = valid_loss / num_valid_data_batches
+            avg_valid_acc = valid_acc / num_valid_data_batches
 
             history.append([avg_train_loss, avg_valid_loss, avg_train_acc, avg_valid_acc])
 

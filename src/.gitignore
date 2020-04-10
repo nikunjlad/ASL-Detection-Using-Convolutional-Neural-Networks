@@ -4,3 +4,5 @@
 *.jpeg
 *.ipynb_checkpoints
 data/
+*.pt
+.DS_Store

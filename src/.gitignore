@@ -4,3 +4,7 @@
 *.jpeg
 *.ipynb_checkpoints
 data/
+*.pt
+.DS_Store
+__pycache__
+*.log

@@ -145,7 +145,7 @@ class Main(DataGen):
         epochs = self.config["HYPERPARAMETERS"]["EPOCHS"]
         history = list()
         train_start = time.time()
-        best_val_loss = None
+        best_val_loss = float('inf')
 
         for epoch in range(epochs):
             epoch_start = time.time()  # start time for the epoch

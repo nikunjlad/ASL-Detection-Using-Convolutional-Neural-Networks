@@ -4,10 +4,8 @@ import numpy as np
 import torch.optim as optim
 import torch.nn as nn
 from torchvision.utils import save_image
-import matplotlib
 import torch.backends.cudnn as cudnn
 
-matplotlib.use("TkAgg")
 from model import Net
 import matplotlib.pyplot as plt
 
@@ -278,30 +276,24 @@ class Main(DataGen):
         hist = np.array(history)  # convert history from list to numpy array
 
         # training and validation loss curves
-        plt.figure(figsize=(12, 12))
-        x = [i for i in range(0, epochs)]
+        x = np.array([i for i in range(0, epochs)])
         plt.plot(x, hist[:, 0])
         plt.plot(x, hist[:, 1])
-        plt.legend(['train_loss', 'valid_loss'], loc='upper right')
         plt.xlabel("Epochs")
         plt.ylabel("Cross-Entropy Loss")
-        plt.title("Loss Curves")
-        plt.xlim(0, 50)
-        fig = plt.gcf()
-        fig.savefig("train_valid_loss_1.png")
+        plt.title("CIFAR-10 Loss Curves")
+        plt.legend(['train_loss', 'valid_loss'], loc='upper right')
+        plt.savefig("train_valid_loss_1.png")
 
         # training and validation accuracy curves
-        plt.figure(figsize=(12, 12))
-        x = [i for i in range(0, epochs)]
+        x = np.array([i for i in range(0, epochs)])
         plt.plot(x, hist[:, 2])
         plt.plot(x, hist[:, 3])
-        plt.legend(['train_acc', 'valid_acc'], loc='upper right')
         plt.xlabel("Epochs")
         plt.ylabel("Accuracy")
-        plt.title("Accuracy Curves")
-        plt.xlim(0, 50)
-        fig = plt.gcf()
-        fig.savefig("train_valid_accuracy_1.png")
+        plt.title("CIFAR-10 Accuracy Curves")
+        plt.legend(['train_acc', 'valid_acc'], loc='upper right')
+        plt.savefig("train_valid_accuracy_1.png")
 
 
 if __name__ == '__main__':

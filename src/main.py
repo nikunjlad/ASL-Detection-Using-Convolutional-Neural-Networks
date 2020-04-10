@@ -140,6 +140,7 @@ class Main(DataGen):
         criterion = nn.CrossEntropyLoss()
         optimizer = optim.SGD(net.parameters(),
                               lr=self.config["HYPERPARAMETERS"]["LR"], momentum=0.9, weight_decay=5e-4)
+        scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, num_train_data_batches, eta_min=0)
 
         # training and validation loop
         epochs = self.config["HYPERPARAMETERS"]["EPOCHS"]
@@ -162,6 +163,8 @@ class Main(DataGen):
             valid_acc = 0.0
 
             for i, (inputs, labels) in enumerate(self.data["train_dataloader"]):
+
+                scheduler.step()  # stepping through the learning rate for optimal convergence
 
                 # if GPU mentioned.
                 if self.train_on_gpu:
@@ -238,6 +241,9 @@ class Main(DataGen):
 
                     print("Validation Batch number: {:03d}/{:03d} | Validation Loss: {:.4f} | "
                           "Validation Accuracy: {:.4f}".format(j, num_valid_data_batches, loss.item(), acc.item() * 100))
+
+            # resetting scheduler
+            scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, num_train_data_batches, eta_min=0)
 
             # Find average training loss and training accuracy
             avg_train_loss = train_loss / train_data_size

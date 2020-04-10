@@ -201,8 +201,8 @@ class Main(DataGen):
                 # Compute total accuracy in the whole batch and add to train_acc
                 train_acc += acc.item() * inputs.size(0)
 
-                print("Batch : {:03d}/{:03d}, Training: Loss: {:.4f}, \
-                        Accuracy: {:.4f}".format(i, train_data_size, loss.item(), acc.item() * 100))
+                print("Batch: {:03d}/{:03d} | Training Loss: {:.4f} | "
+                      "Training Accuracy: {:.4f}".format(i, num_train_data_batches, loss.item(), acc.item() * 100))
 
             # Validation - No gradient tracking needed
             with torch.no_grad():
@@ -236,8 +236,8 @@ class Main(DataGen):
                     # Compute total accuracy in the whole batch and add to valid_acc
                     valid_acc += acc.item() * inputs.size(0)
 
-                    print("Validation Batch number: {:03d}/{:03d}, Validation: Loss: {:.4f}, \
-                            Accuracy: {:.4f}".format(j, valid_data_size, loss.item(), acc.item() * 100))
+                    print("Validation Batch number: {:03d}/{:03d} | Validation Loss: {:.4f} | "
+                          "Validation Accuracy: {:.4f}".format(j, num_valid_data_batches, loss.item(), acc.item() * 100))
 
             # Find average training loss and training accuracy
             avg_train_loss = train_loss / train_data_size
@@ -251,19 +251,19 @@ class Main(DataGen):
 
             epoch_end = time.time()
             print("-" * 89)
-            print("Epoch : {:03d}, Training: Loss: {:.4f}, Accuracy: {:.4f}%, Validation : Loss : {:.4f}, \
-                        Accuracy: {:.4f}%, Time: {:.4f}s".format(epoch + 1, avg_train_loss, avg_train_acc * 100,
+            print("Epoch: {:03d} | Train Loss: {:.4f} | Train Accuracy: {:.4f}% | Valid Loss : {:.4f} | "
+                  "Valid Accuracy: {:.4f}% | Time: {:.4f}s".format(epoch + 1, avg_train_loss, avg_train_acc * 100,
                                                                  avg_valid_loss, avg_valid_acc * 100,
                                                                  epoch_end - epoch_start))
             print("-" * 89)
 
-            if not avg_valid_loss or avg_valid_loss < best_val_loss:
+            if avg_valid_loss < best_val_loss:
                 with open(self.config["DATALOADER"]["MODEL_PATH"], 'wb') as f:
                     # keep saving the best model as and when the validation loss falls below best loss
-                    print("\nPrevious loss: {:.4f}, \
-                            Best Loss: {:.4f}, saving best model...\n".format(best_val_loss, avg_valid_loss))
+                    print("\nPrevious Best loss: {:.4f} | New Best Loss: {:.4f} | "
+                          "Saving Best model...\n".format(best_val_loss, avg_valid_loss))
                     torch.save(net, f)
-                best_val_loss = avg_train_loss  # new best loss is the recently found validation loss
+                best_val_loss = avg_valid_loss  # new best loss is the recently found validation loss
 
         train_stop = time.time()
         self.logger.info("Time taken for training: {}".format(str(train_stop - train_start)))

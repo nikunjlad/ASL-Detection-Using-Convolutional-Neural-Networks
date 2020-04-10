@@ -73,6 +73,7 @@ class Main(DataGen):
         This is the wrapper function which calls and generates data from other classes and helper functions
         :return: main program execution
         """
+        stats = dict()
 
         # configure GPU if available
         if self.config["HYPERPARAMETERS"]["GPU"]:
@@ -201,8 +202,8 @@ class Main(DataGen):
                 # Compute total accuracy in the whole batch and add to train_acc
                 train_acc += acc.item() * inputs.size(0)
 
-                print("Batch: {:03d}/{:03d} | Training Loss: {:.4f} | "
-                      "Training Accuracy: {:.4f}".format(i, num_train_data_batches, loss.item(), acc.item() * 100))
+                print("Batch: {:03d}/{:03d}, Training Loss: {:.4f}, "
+                      "Training Acc: {:.4f}".format(i, num_train_data_batches, loss.item(), acc.item() * 100))
 
             # Validation - No gradient tracking needed
             with torch.no_grad():
@@ -236,8 +237,8 @@ class Main(DataGen):
                     # Compute total accuracy in the whole batch and add to valid_acc
                     valid_acc += acc.item() * inputs.size(0)
 
-                    print("Validation Batch number: {:03d}/{:03d} | Validation Loss: {:.4f} | "
-                          "Validation Accuracy: {:.4f}".format(j, num_valid_data_batches, loss.item(), acc.item() * 100))
+                    print("Validation Batch number: {:03d}/{:03d}, Validation Loss: {:.4f}, "
+                          "Validation Acc: {:.4f}".format(j, num_valid_data_batches, loss.item(), acc.item() * 100))
 
             # resetting scheduler
             scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, num_train_data_batches, eta_min=0)
@@ -254,8 +255,8 @@ class Main(DataGen):
 
             epoch_end = time.time()
             print("-" * 89)
-            print("Epoch: {:03d} | Train Loss: {:.4f} | Train Accuracy: {:.4f}% | Valid Loss : {:.4f} | "
-                  "Valid Accuracy: {:.4f}% | Time: {:.4f}s".format(epoch + 1, avg_train_loss, avg_train_acc * 100,
+            print("Epoch: {:03d}, Train Loss: {:.4f}, Train Acc: {:.4f}%, Valid Loss : {:.4f}, "
+                  "Valid Acc: {:.4f}%, Time: {:.4f}s".format(epoch + 1, avg_train_loss, avg_train_acc * 100,
                                                                  avg_valid_loss, avg_valid_acc * 100,
                                                                  epoch_end - epoch_start))
             print("-" * 89)
@@ -295,6 +296,50 @@ class Main(DataGen):
         plt.legend(['train_acc', 'valid_acc'], loc='upper right')
         plt.savefig("train_valid_accuracy_1.png")
 
+        # load model after training for testing
+        net.load_state_dict(torch.load('asl.pt'))
+
+        test_loss = 0
+        test_acc = 0
+
+        # Validation - No gradient tracking needed
+        with torch.no_grad():
+
+            # Set to evaluation mode
+            net.eval()
+
+            # Validation loop
+            for j, (inputs, labels) in enumerate(self.data["test_dataloader"]):
+                inputs = inputs.cuda()
+                labels = labels.cuda()
+
+                # Forward pass - compute outputs on input data using the model
+                outputs = net(inputs)
+
+                # Compute loss
+                loss = criterion(outputs, labels)
+
+                # Compute the total loss for the batch and add it to valid_loss
+                test_loss += loss.item() * inputs.size(0)
+
+                # Calculate validation accuracy
+                ret, predictions = torch.max(outputs.data, 1)
+                print(predictions.cpu().numpy()[0])
+                correct_counts = predictions.eq(labels.data.view_as(predictions))
+
+                # Convert correct_counts to float and then compute the mean
+                acc = torch.mean(correct_counts.type(torch.FloatTensor))
+
+                # Compute total accuracy in the whole batch and add to valid_acc
+                test_acc += acc.item() * inputs.size(0)
+
+                print("Test Batch number: {:03d}/{:03d}, Test Loss: {:.4f}, "
+                      "Test Accuracy: {:.4f}".format(j, num_test_data_batches, loss.item(), acc.item() * 100))
+
+            avg_test_loss = test_loss / test_data_size
+            avg_test_acc = test_acc / float(test_data_size)
+
+            print("Test: Loss : {:.4f}, Accuracy: {:.4f}%".format(avg_test_loss, avg_test_acc * 100))
 
 if __name__ == '__main__':
     m = Main()

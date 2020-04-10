@@ -51,7 +51,7 @@ HYPERPARAMETERS:
   STRIDES: True
   GPU: True
   DEVICES: [2,3]
-  PARALLEL: False
+  PARALLEL: True
   PLOT_IMG: False
 DATALOADER:
   DATA_DIR: "/Users/nikunjlad"

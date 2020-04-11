@@ -276,7 +276,7 @@ class Main(DataGen):
         hist = np.array(history)  # convert history from list to numpy array
 
         # training and validation loss curves
-        plt.figure(figsize=(8, 8))
+        plt.figure(figsize=(7, 6))
         x = np.array([i for i in range(0, epochs)])
         plt.plot(x, hist[:, 0])
         plt.plot(x, hist[:, 1])
@@ -284,10 +284,10 @@ class Main(DataGen):
         plt.ylabel("Cross-Entropy Loss")
         plt.title("CIFAR-10 Loss Curves")
         plt.legend(['train_loss', 'valid_loss'], loc='upper right')
-        plt.savefig("train_valid_loss_1.png")
+        plt.savefig("train_valid_loss_2.png")
 
         # training and validation accuracy curves
-        plt.figure(figsize=(8, 8))
+        plt.figure(figsize=(7, 6))
         x = np.array([i for i in range(0, epochs)])
         plt.plot(x, hist[:, 2])
         plt.plot(x, hist[:, 3])
@@ -295,7 +295,7 @@ class Main(DataGen):
         plt.ylabel("Accuracy")
         plt.title("CIFAR-10 Accuracy Curves")
         plt.legend(['train_acc', 'valid_acc'], loc='upper right')
-        plt.savefig("train_valid_accuracy_1.png")
+        plt.savefig("train_valid_accuracy_2.png")
 
         # load model after training for testing
         net.load_state_dict(torch.load('asl.pt'))
@@ -358,13 +358,13 @@ class Main(DataGen):
                     info = dict()
                     info["id"] = dev
                     info["device_name"] = torch.cuda.get_device_properties(dev).name
-                    info["total_memory"] = torch.cuda.get_device_properties(dev).total_memory
+                    info["total_memory (MB)"] = torch.cuda.get_device_properties(dev).total_memory * (2 ** -20)
                     stats["device"]["devices"].append(info)
             else:
                 info = dict()
                 info["id"] = self.config["HYPERPARAMETERS"]["DEVICES"][0]
                 info["device_name"] = torch.cuda.get_device_properties(info["id"]).name
-                info["total_memory"] = torch.cuda.get_device_properties(info["id"]).total_memory
+                info["total_memory (MB)"] = torch.cuda.get_device_properties(info["id"]).total_memory * (2 ** -20)
                 stats["device"]["devices"].append(info)
         stats["hyperparameters"]["epochs"] = self.config["HYPERPARAMETERS"]["EPOCHS"]
         stats["hyperparameters"]["learning_rate"] = self.config["HYPERPARAMETERS"]["LR"]

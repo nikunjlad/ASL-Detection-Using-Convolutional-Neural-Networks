@@ -134,7 +134,7 @@ class Main(DataGen):
 
         if self.config["HYPERPARAMETERS"]["PARALLEL"]:
             net = torch.nn.DataParallel(net, device_ids=self.config["HYPERPARAMETERS"]["DEVICES"])
-            cudnn.benchmark = True
+
 
         criterion = nn.CrossEntropyLoss()
         optimizer = optim.SGD(net.parameters(),
@@ -276,7 +276,7 @@ class Main(DataGen):
         hist = np.array(history)  # convert history from list to numpy array
 
         # training and validation loss curves
-        plt.figure(figsize=(12, 12))
+        plt.figure(figsize=(8, 8))
         x = np.array([i for i in range(0, epochs)])
         plt.plot(x, hist[:, 0])
         plt.plot(x, hist[:, 1])
@@ -287,7 +287,7 @@ class Main(DataGen):
         plt.savefig("train_valid_loss_1.png")
 
         # training and validation accuracy curves
-        plt.figure(figsize=(12, 12))
+        plt.figure(figsize=(8, 8))
         x = np.array([i for i in range(0, epochs)])
         plt.plot(x, hist[:, 2])
         plt.plot(x, hist[:, 3])
@@ -348,12 +348,6 @@ class Main(DataGen):
         # writing stats
 
         stats["hyperparameters"] = dict()
-        stats["hyperparameters"]["epochs"] = self.config["HYPERPARAMETERS"]["EPOCHS"]
-        stats["hyperparameters"]["learning_rate"] = self.config["HYPERPARAMETERS"]["LR"]
-        stats["hyperparameters"]["batch_size"] = self.config["HYPERPARAMETERS"]["BATCH_SIZE"]
-        stats["hyperparameters"]["optimizer"] = self.config["HYPERPARAMETERS"]["OPTIMIZER"]
-        stats["hyperparameters"]["activation"] = self.config["HYPERPARAMETERS"]["ACTIVATION"]
-        stats["hyperparameters"]["dropout"] = net.dropout.p
         stats["device"] = dict()
         stats["device"]["type"] = ["gpu" if self.config["HYPERPARAMETERS"]["GPU"] else "cpu"][0]
         stats["device"]["parallel"] = self.config["HYPERPARAMETERS"]["PARALLEL"]
@@ -372,8 +366,16 @@ class Main(DataGen):
                 info["device_name"] = torch.cuda.get_device_properties(info["id"]).name
                 info["total_memory"] = torch.cuda.get_device_properties(info["id"]).total_memory
                 stats["device"]["devices"].append(info)
+        stats["hyperparameters"]["epochs"] = self.config["HYPERPARAMETERS"]["EPOCHS"]
+        stats["hyperparameters"]["learning_rate"] = self.config["HYPERPARAMETERS"]["LR"]
+        stats["hyperparameters"]["batch_size"] = self.config["HYPERPARAMETERS"]["BATCH_SIZE"]
+        stats["hyperparameters"]["optimizer"] = self.config["HYPERPARAMETERS"]["OPTIMIZER"]
+        stats["hyperparameters"]["activation"] = self.config["HYPERPARAMETERS"]["ACTIVATION"]
+        if stats["device"]["parallel"]:
+            stats["hyperparameters"]["dropout"] = net.module.dropout.p
+        else:
+            stats["hyperparameters"]["dropout"] = net.dropout.p
         stats["metrics"] = dict()
-        # history.append([avg_train_loss, avg_valid_loss, avg_train_acc, avg_valid_acc])
         stats["metrics"]["training_loss"] = history[-1][0]
         stats["metrics"]["training_accuracy"] = history[-1][2]
         stats["metrics"]["validation_loss"] = history[-1][1]

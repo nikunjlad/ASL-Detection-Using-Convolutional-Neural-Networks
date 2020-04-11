@@ -10,6 +10,7 @@ from model import Net
 import matplotlib.pyplot as plt
 
 warnings.filterwarnings('ignore')
+logging.getLogger('matplotlib.font_manager').disabled = True
 
 # only A and B
 categories = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',

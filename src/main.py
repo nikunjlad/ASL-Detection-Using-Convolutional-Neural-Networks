@@ -263,18 +263,16 @@ class Main(DataGen):
             print("-" * 89)
 
             if avg_valid_loss < best_val_loss:
-                with open(self.config["DATALOADER"]["MODEL_PATH"], 'wb') as f:
-                    # keep saving the best model as and when the validation loss falls below best loss
-                    print("\nPrevious Best loss: {:.4f} | New Best Loss: {:.4f} | "
-                          "Saving Best model...\n".format(best_val_loss, avg_valid_loss))
-                    torch.save(net, f)
+                print("\nPrevious Best loss: {:.4f} | New Best Loss: {:.4f} | "
+                      "Saving Best model...\n".format(best_val_loss, avg_valid_loss))
+                torch.save(net.state_dict(), self.config["DATALOADER"]["MODEL_PATH"])
                 best_val_loss = avg_valid_loss  # new best loss is the recently found validation loss
 
         train_stop = time.time()
         self.logger.info("Time taken for training: {}".format(str(train_stop - train_start)))
 
         # saving model once training is done
-        torch.save(net.state_dict(), 'asl.pt')  # save the resnet model
+        # torch.save(net.state_dict(), 'asl.pt')  # save the resnet model
         hist = np.array(history)  # convert history from list to numpy array
 
         # training and validation loss curves

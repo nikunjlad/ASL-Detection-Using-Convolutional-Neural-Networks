@@ -363,7 +363,8 @@ class Main(DataGen):
                 print(dev)
         else:
             stats["device"]["devices"]["id"] = self.config["HYPERPARAMETERS"]["DEVICES"][0]
-            
+
+        print(stats)
 
 
 if __name__ == '__main__':

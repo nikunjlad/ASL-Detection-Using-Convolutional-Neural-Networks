@@ -49,9 +49,9 @@ HYPERPARAMETERS:
   BATCH_NORMALIZATION: True
   PADDING: True
   STRIDES: True
-  GPU: True
+  GPU: False
   DEVICES: [0]
-  PARALLEL: True
+  PARALLEL: False
   PLOT_IMG: False
 DATALOADER:
   DATA_DIR: "/Users/nikunjlad"

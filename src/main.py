@@ -277,6 +277,9 @@ class Main(DataGen):
         # torch.save(net.state_dict(), 'asl.pt')  # save the resnet model
         hist = np.array(history)  # convert history from list to numpy array
 
+        loss_name = output_path + "/train_valid_loss_" + str(len(self.config["HYPERPARAMETERS"]["DEVICES"])) + ".png"
+        acc_name = output_path + "/train_valid_accuracy_" + str(len(self.config["HYPERPARAMETERS"]["DEVICES"])) + ".png"
+
         # training and validation loss curves
         plt.figure(figsize=(7, 6))
         x = np.array([i for i in range(0, epochs)])
@@ -286,7 +289,7 @@ class Main(DataGen):
         plt.ylabel("Cross-Entropy Loss")
         plt.title("CIFAR-10 Loss Curves")
         plt.legend(['train_loss', 'valid_loss'], loc='upper right')
-        plt.savefig(output_path + "/train_valid_loss_4.png")
+        plt.savefig(loss_name)
 
         # training and validation accuracy curves
         plt.figure(figsize=(7, 6))
@@ -297,7 +300,7 @@ class Main(DataGen):
         plt.ylabel("Accuracy")
         plt.title("CIFAR-10 Accuracy Curves")
         plt.legend(['train_acc', 'valid_acc'], loc='upper right')
-        plt.savefig(output_path + "/train_valid_accuracy_4.png")
+        plt.savefig(acc_name)
 
         # load model after training for testing
         net.load_state_dict(torch.load(output_path + "/" + self.config["DATALOADER"]["MODEL_PATH"]))

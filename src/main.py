@@ -297,7 +297,7 @@ class Main(DataGen):
         plt.ylabel("Accuracy")
         plt.title("CIFAR-10 Accuracy Curves")
         plt.legend(['train_acc', 'valid_acc'], loc='upper right')
-        plt.savefig(output_path + "train_valid_accuracy_3.png")
+        plt.savefig(output_path + "/train_valid_accuracy_3.png")
 
         # load model after training for testing
         net.load_state_dict(torch.load(output_path + "/" + self.config["DATALOADER"]["MODEL_PATH"]))

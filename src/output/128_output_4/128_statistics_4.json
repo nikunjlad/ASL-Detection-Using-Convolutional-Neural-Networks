@@ -199,5 +199,19 @@
       0.004697354891434278,
       0.9994256174612292
     ]
-  ]
+  ],
+  "data": {
+    "training": {
+      "num_samples": 76760,
+      "num_batches": 600
+    },
+    "validation": {
+      "num_samples": 8528,
+      "num_batches": 67
+    },
+    "testing": {
+      "num_samples": 1741,
+      "num_batches": 14
+    }
+  }
 }

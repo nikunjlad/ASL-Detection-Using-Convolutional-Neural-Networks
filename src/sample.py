@@ -30,6 +30,7 @@ for k, v in state_dict.items():
     new_state_dict[name] = v
 
 net = Net()
+print(net)
 net.load_state_dict(new_state_dict)
 total_params = sum(p.numel() for p in net.parameters())
 print(total_params)

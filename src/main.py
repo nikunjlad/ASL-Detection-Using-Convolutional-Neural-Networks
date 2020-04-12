@@ -67,7 +67,7 @@ class Main(DataGen):
         else:
             torch.cuda.set_device(device_id)
             self.logger.info(
-                'CUDA is available! Training on {} NVidia {}'.format(str(len(self.config["HYPERPARAMETERS"]["DEVICES"])),
+                'CUDA is available! Training on {} NVidia {} GPUs'.format(str(len(self.config["HYPERPARAMETERS"]["DEVICES"])),
                                                                      str(torch.cuda.get_device_name(0))))
 
     def main(self):

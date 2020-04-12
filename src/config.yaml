@@ -43,21 +43,21 @@ HYPERPARAMETERS:
   LOSS: CROSS_ENTROPY_LOSS
   ACTIVATION: RELU
   LR: 0.005
-  BATCH_SIZE: 128
+  BATCH_SIZE: 256
   EPOCHS: 25
   DROPOUT: True
   BATCH_NORMALIZATION: True
   PADDING: True
   STRIDES: True
-  GPU: False
+  GPU: True
   DEVICES: [0]
   PARALLEL: False
   PLOT_IMG: False
 DATALOADER:
   DATA_DIR: "/Users/nikunjlad"
-  STATS_PATH: "statistics_1.json"
-  MODEL_PATH: "asl_1.pt"
-  OUTPUT_PATH: "output_1"
+  STATS_PATH: "256_statistics_1.json"
+  MODEL_PATH: "256_asl_1.pt"
+  OUTPUT_PATH: "256_output_1"
   VALIDATION_SPLIT: 0.1
   ONE_HOT_ENCODE: False
 

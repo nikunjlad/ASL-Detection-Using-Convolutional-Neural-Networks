@@ -391,11 +391,24 @@ class Main(DataGen):
         stats["metrics"]["runtime (secs)"] = train_stop - train_start
         stats["training_history"] = history
         stats["test_history"] = test_hist
+        stats["data"] = dict()
+        train_dict = dict()
+        train_dict["num_samples"] = train_data_size
+        train_dict["num_batches"] = num_train_data_batches
+        stats["data"]["training"] = train_dict
+        valid_dict = dict()
+        valid_dict["num_samples"] = valid_data_size
+        valid_dict["num_batches"] = num_valid_data_batches
+        test_dict = dict()
+        test_dict["num_samples"] = test_data_size
+        test_dict["num_batches"] = num_test_data_batches
 
         with open(output_path + "/" + self.config["DATALOADER"]["STATS_PATH"], 'w') as outfile:
             json.dump(stats, outfile, indent=2)
 
         print(stats)
+
+        # 1383.2083 seconds for 1 epoch. about 9.605 hours for 25. early stopped after 1 epoch. 576.33 mins
 
 
 if __name__ == '__main__':

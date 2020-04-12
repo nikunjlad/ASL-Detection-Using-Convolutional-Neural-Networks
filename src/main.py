@@ -399,9 +399,11 @@ class Main(DataGen):
         valid_dict = dict()
         valid_dict["num_samples"] = valid_data_size
         valid_dict["num_batches"] = num_valid_data_batches
+        stats["data"]["validation"] = valid_dict
         test_dict = dict()
         test_dict["num_samples"] = test_data_size
         test_dict["num_batches"] = num_test_data_batches
+        stats["data"]["testing"] = test_dict
 
         with open(output_path + "/" + self.config["DATALOADER"]["STATS_PATH"], 'w') as outfile:
             json.dump(stats, outfile, indent=2)

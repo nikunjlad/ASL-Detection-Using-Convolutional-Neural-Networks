@@ -50,14 +50,14 @@ HYPERPARAMETERS:
   PADDING: True
   STRIDES: True
   GPU: True
-  DEVICES: [0,1,2]
+  DEVICES: [0,1,2,3]
   PARALLEL: True
   PLOT_IMG: False
 DATALOADER:
   DATA_DIR: "/Users/nikunjlad"
-  STATS_PATH: "statistics_3.json"
-  MODEL_PATH: "asl_3.pt"
-  OUTPUT_PATH: "output_3"
+  STATS_PATH: "statistics_4.json"
+  MODEL_PATH: "asl_4.pt"
+  OUTPUT_PATH: "output_4"
   VALIDATION_SPLIT: 0.1
   ONE_HOT_ENCODE: False
 

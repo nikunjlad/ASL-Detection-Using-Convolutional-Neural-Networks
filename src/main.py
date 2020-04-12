@@ -286,7 +286,7 @@ class Main(DataGen):
         plt.ylabel("Cross-Entropy Loss")
         plt.title("CIFAR-10 Loss Curves")
         plt.legend(['train_loss', 'valid_loss'], loc='upper right')
-        plt.savefig(output_path + "/train_valid_loss_3.png")
+        plt.savefig(output_path + "/train_valid_loss_4.png")
 
         # training and validation accuracy curves
         plt.figure(figsize=(7, 6))
@@ -297,7 +297,7 @@ class Main(DataGen):
         plt.ylabel("Accuracy")
         plt.title("CIFAR-10 Accuracy Curves")
         plt.legend(['train_acc', 'valid_acc'], loc='upper right')
-        plt.savefig(output_path + "/train_valid_accuracy_3.png")
+        plt.savefig(output_path + "/train_valid_accuracy_4.png")
 
         # load model after training for testing
         net.load_state_dict(torch.load(output_path + "/" + self.config["DATALOADER"]["MODEL_PATH"]))

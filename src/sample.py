@@ -1,113 +1,77 @@
-from threading import Thread
-import cv2, os
-from datetime import datetime
-import warnings
+from model import Net
+import torch
+import cv2
+from torchvision import transforms
+from torch.autograd import Variable
 
-warnings.filterwarnings("ignore")
-# os.environ["DYLD_PRINT_LIBRARIES"]='1'
+import numpy as np
+import matplotlib.pyplot as plt
 
-class CountsPerSec:
-    """
-    Class that tracks the number of occurrences ("counts") of an
-    arbitrary event and returns the frequency in occurrences
-    (counts) per second. The caller must increment the count.
-    """
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+from PIL import Image
 
-    def __init__(self):
-        self._start_time = None
-        self._num_occurrences = 0
+categories = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+              'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+              'space', 'nothing', 'del']
 
-    def start(self):
-        self._start_time = datetime.now()
-        return self
+labels = dict()
 
-    def increment(self):
-        self._num_occurrences += 1
+for ind, label in enumerate(categories):
+    labels[ind] = label
 
-    def countsPerSec(self):
-        elapsed_time = (datetime.now() - self._start_time).total_seconds()
-        return self._num_occurrences / elapsed_time if elapsed_time > 0 else 0
+print(labels)
 
+state_dict = torch.load("asl_2.pt", map_location=torch.device('cpu'))
+from collections import OrderedDict
 
-class VideoGet:
-    """
-    Class that continuously gets frames from a VideoCapture object
-    with a dedicated thread.
-    """
+new_state_dict = OrderedDict()
+for k, v in state_dict.items():
+    name = k[7:]  # remove `module.`
+    new_state_dict[name] = v
 
-    def __init__(self, src=0):
-        self.stream = cv2.VideoCapture(src)
-        (self.grabbed, self.frame) = self.stream.read()
-        self.stopped = False
-
-    def start(self):
-        Thread(target=self.get, args=()).start()
-        return self
-
-    def get(self):
-        while not self.stopped:
-            if not self.grabbed:
-                self.stop()
-            else:
-                (self.grabbed, self.frame) = self.stream.read()
-
-    def stop(self):
-        self.stopped = True
+net = Net()
+net.load_state_dict(new_state_dict)
+loader = transforms.Compose([transforms.Resize(150), transforms.ToTensor(),
+                             transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))])
 
 
-class VideoShow:
-    """
-    Class that continuously shows a frame using a dedicated thread.
-    """
+def resize_image(size, im):
+    desired_size = size
+    old_size = im.shape[:2]  # old_size is in (height, width) format
 
-    def __init__(self, frame=None):
-        self.frame = frame
-        self.stopped = False
+    ratio = float(desired_size) / max(old_size)
+    new_size = tuple([int(x * ratio) for x in old_size])
 
-    def start(self):
-        Thread(target=self.show, args=()).start()
-        return self
+    # new_size should be in (width, height) format
 
-    def show(self):
-        while not self.stopped:
-            cv2.imshow("Video", self.frame)
-            if cv2.waitKey(1) == ord("q"):
-                self.stopped = True
+    im = cv2.resize(im, (new_size[1], new_size[0]))
 
-    def stop(self):
-        self.stopped = True
+    delta_w = desired_size - new_size[1]
+    delta_h = desired_size - new_size[0]
+    top, bottom = delta_h // 2, delta_h - (delta_h // 2)
+    left, right = delta_w // 2, delta_w - (delta_w // 2)
+
+    color = [0, 0, 0]
+    new_im = cv2.copyMakeBorder(im, top, bottom, left, right, cv2.BORDER_CONSTANT, value=color)
+
+    return new_im
 
 
-if __name__ == "__main__":
-    video_getter = VideoGet(0).start()
-    video_shower = VideoShow(video_getter.frame).start()
-    cps = CountsPerSec().start()
+def image_loader(image_name):
+    """load image, returns cuda tensor"""
+    img = cv2.imread(image_name, cv2.IMREAD_UNCHANGED)
+    image = resize_image(150, img)
+    image = Image.fromarray(image)
+    image = loader(image).float()
+    print(image.shape)
+    image.unsqueeze_(0)
+    image = Variable(image)
+    out = net(image).data.numpy().argmax()
+    print("Sign is: {}".format(str(labels[out])))
+    cv2.putText(img, '{}'.format(labels[out]), (10,30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+    cv2.imshow("letter", img)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
 
-    while True:
-        if video_getter.stopped or video_shower.stopped:
-            video_shower.stop()
-            video_getter.stop()
-            break
 
-        frame = video_getter.frame
-        cv2.putText(frame, "{:.0f} iterations/sec".format(cps.countsPerSec()),
-                    (10, 450), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255))
-        video_shower.frame = frame
-        cps.increment()
-
-    # import cv2
-    #
-    # cap = cv2.VideoCapture(0)
-    #
-    # while (True):
-    #     # Capture frame-by-frame
-    #     ret, frame = cap.read()
-    #
-    #     # Display the resulting frame
-    #     cv2.imshow('frame', frame)
-    #     if cv2.waitKey(1) & 0xFF == ord('q'):
-    #         break
-    #
-    # # When everything done, release the capture
-    # cap.release()
-    # cv2.destroyAllWindows()
+image_loader("images/F6.jpg")

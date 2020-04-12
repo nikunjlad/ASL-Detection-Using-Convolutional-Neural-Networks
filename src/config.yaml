@@ -57,6 +57,7 @@ DATALOADER:
   DATA_DIR: "/Users/nikunjlad"
   STATS_PATH: "statistics_2.json"
   MODEL_PATH: "asl_2.pt"
+  OUTPUT_PATH: "output_2"
   VALIDATION_SPLIT: 0.1
   ONE_HOT_ENCODE: False
 

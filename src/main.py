@@ -91,6 +91,8 @@ class Main(DataGen):
 
         # loading data
         data_path = os.path.join(self.config["DATALOADER"]["DATA_DIR"], "data/asl/alphabets.h5")
+        output_path = os.path.join("output/", self.config["DATALOADER"]["OUTPUT_PATH"])
+        os.mkdir(output_path)
 
         self.load_data_from_h5(data_path)
         self.split_data()
@@ -266,7 +268,7 @@ class Main(DataGen):
             if avg_valid_loss < best_val_loss:
                 print("\nPrevious Best loss: {:.4f} | New Best Loss: {:.4f} | "
                       "Saving Best model...\n".format(best_val_loss, avg_valid_loss))
-                torch.save(net.state_dict(), self.config["DATALOADER"]["MODEL_PATH"])
+                torch.save(net.state_dict(), output_path + "/" + self.config["DATALOADER"]["MODEL_PATH"])
                 best_val_loss = avg_valid_loss  # new best loss is the recently found validation loss
 
         train_stop = time.time()
@@ -285,7 +287,7 @@ class Main(DataGen):
         plt.ylabel("Cross-Entropy Loss")
         plt.title("CIFAR-10 Loss Curves")
         plt.legend(['train_loss', 'valid_loss'], loc='upper right')
-        plt.savefig("train_valid_loss_2.png")
+        plt.savefig(output_path + "/train_valid_loss_2.png")
 
         # training and validation accuracy curves
         plt.figure(figsize=(7, 6))
@@ -296,10 +298,10 @@ class Main(DataGen):
         plt.ylabel("Accuracy")
         plt.title("CIFAR-10 Accuracy Curves")
         plt.legend(['train_acc', 'valid_acc'], loc='upper right')
-        plt.savefig("train_valid_accuracy_2.png")
+        plt.savefig(output_path + "train_valid_accuracy_2.png")
 
         # load model after training for testing
-        net.load_state_dict(torch.load('asl.pt'))
+        net.load_state_dict(torch.load(output_path + "/" + self.config["DATALOADER"]["MODEL_PATH"]))
 
         test_loss = 0
         test_acc = 0
@@ -382,12 +384,12 @@ class Main(DataGen):
         stats["metrics"]["validation_loss"] = history[-1][1]
         stats["metrics"]["validation_accuracy"] = history[-1][3]
         stats["metrics"]["test_loss"] = test_hist[-1][0]
-        stats["metrics"]["test_accuracy"] = history[-1][1]
+        stats["metrics"]["test_accuracy"] = test_hist[-1][1]
         stats["metrics"]["runtime (secs)"] = train_stop - train_start
         stats["training_history"] = history
         stats["test_history"] = test_hist
 
-        with open(self.config["DATALOADER"]["STATS_PATH"], 'w') as outfile:
+        with open(output_path + "/" + self.config["DATALOADER"]["STATS_PATH"], 'w') as outfile:
             json.dump(stats, outfile, indent=2)
 
         print(stats)

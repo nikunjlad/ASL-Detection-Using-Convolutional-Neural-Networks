@@ -194,6 +194,14 @@
     "training": {
       "num_samples": 76760,
       "num_batches": 300
+    },
+    "validation": {
+      "num_samples": 8528,
+      "num_batches": 34
+    },
+    "testing": {
+      "num_samples": 1741,
+      "num_batches": 7
     }
   }
 }

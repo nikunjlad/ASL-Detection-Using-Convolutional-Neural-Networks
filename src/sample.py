@@ -31,6 +31,8 @@ for k, v in state_dict.items():
 
 net = Net()
 net.load_state_dict(new_state_dict)
+total_params = sum(p.numel() for p in net.parameters())
+print(total_params)
 loader = transforms.Compose([transforms.Resize(150), transforms.ToTensor(),
                              transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))])
 

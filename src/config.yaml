@@ -44,20 +44,20 @@ HYPERPARAMETERS:
   ACTIVATION: RELU
   LR: 0.005
   BATCH_SIZE: 128
-  EPOCHS: 20
+  EPOCHS: 25
   DROPOUT: True
   BATCH_NORMALIZATION: True
   PADDING: True
   STRIDES: True
   GPU: True
-  DEVICES: [0,1]
+  DEVICES: [0,1,2]
   PARALLEL: True
   PLOT_IMG: False
 DATALOADER:
   DATA_DIR: "/Users/nikunjlad"
-  STATS_PATH: "statistics_2.json"
-  MODEL_PATH: "asl_2.pt"
-  OUTPUT_PATH: "output_2"
+  STATS_PATH: "statistics_3.json"
+  MODEL_PATH: "asl_3.pt"
+  OUTPUT_PATH: "output_3"
   VALIDATION_SPLIT: 0.1
   ONE_HOT_ENCODE: False
 

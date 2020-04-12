@@ -138,7 +138,6 @@ class Main(DataGen):
         if self.config["HYPERPARAMETERS"]["PARALLEL"]:
             net = torch.nn.DataParallel(net, device_ids=self.config["HYPERPARAMETERS"]["DEVICES"])
 
-
         criterion = nn.CrossEntropyLoss()
         optimizer = optim.SGD(net.parameters(),
                               lr=self.config["HYPERPARAMETERS"]["LR"], momentum=0.9, weight_decay=5e-4)
@@ -287,7 +286,7 @@ class Main(DataGen):
         plt.ylabel("Cross-Entropy Loss")
         plt.title("CIFAR-10 Loss Curves")
         plt.legend(['train_loss', 'valid_loss'], loc='upper right')
-        plt.savefig(output_path + "/train_valid_loss_2.png")
+        plt.savefig(output_path + "/train_valid_loss_3.png")
 
         # training and validation accuracy curves
         plt.figure(figsize=(7, 6))
@@ -298,7 +297,7 @@ class Main(DataGen):
         plt.ylabel("Accuracy")
         plt.title("CIFAR-10 Accuracy Curves")
         plt.legend(['train_acc', 'valid_acc'], loc='upper right')
-        plt.savefig(output_path + "train_valid_accuracy_2.png")
+        plt.savefig(output_path + "train_valid_accuracy_3.png")
 
         # load model after training for testing
         net.load_state_dict(torch.load(output_path + "/" + self.config["DATALOADER"]["MODEL_PATH"]))

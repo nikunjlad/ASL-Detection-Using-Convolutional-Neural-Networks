@@ -21,7 +21,7 @@ for ind, label in enumerate(categories):
 
 print(labels)
 
-state_dict = torch.load("asl_2.pt", map_location=torch.device('cpu'))
+state_dict = torch.load("output/256_output_3/256_asl_3.pt", map_location=torch.device('cpu'))
 from collections import OrderedDict
 
 new_state_dict = OrderedDict()
@@ -73,8 +73,9 @@ def image_loader(image_name):
     print("Sign is: {}".format(str(labels[out])))
     cv2.putText(img, '{}'.format(labels[out]), (10,30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
     cv2.imshow("letter", img)
+    cv2.imwrite("j131.png", img)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
 
-image_loader("images/F6.jpg")
+image_loader("images/J131.jpg")

@@ -288,7 +288,7 @@ class Main(DataGen):
         plt.plot(x, hist[:, 1])
         plt.xlabel("Epochs")
         plt.ylabel("Cross-Entropy Loss")
-        plt.title("CIFAR-10 Loss Curves")
+        plt.title("Loss Curves")
         plt.legend(['train_loss', 'valid_loss'], loc='upper right')
         plt.savefig(loss_name)
 
@@ -299,7 +299,7 @@ class Main(DataGen):
         plt.plot(x, hist[:, 3])
         plt.xlabel("Epochs")
         plt.ylabel("Accuracy")
-        plt.title("CIFAR-10 Accuracy Curves")
+        plt.title("Accuracy Curves")
         plt.legend(['train_acc', 'valid_acc'], loc='upper right')
         plt.savefig(acc_name)
 

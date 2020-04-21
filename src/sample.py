@@ -3,6 +3,8 @@ import torch
 import cv2
 from torchvision import transforms
 from torch.autograd import Variable
+from imutils.video import VideoStream
+import imutils
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -78,4 +80,33 @@ def image_loader(image_name):
     cv2.destroyAllWindows()
 
 
-image_loader("images/J131.jpg")
+# image_loader("images/J131.jpg")
+
+vs = VideoStream(src=0).start()
+
+while True:
+    # grab the frame from the threaded video stream and resize it
+    # to have a maximum width of 400 pixels
+    frame = vs.read()
+    frame = imutils.resize(frame, width=400)
+    # detect faces in the frame, and for each face in the frame,
+    # predict the age
+    image = resize_image(150, frame)
+    image = Image.fromarray(image)
+    image = loader(image).float()
+    print(image.shape)
+    image.unsqueeze_(0)
+    image = Variable(image)
+    out = net(image).data.numpy().argmax()
+    print("Sign is: {}".format(str(labels[out])))
+    cv2.putText(frame, '{}'.format(labels[out]), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+
+    # show the output frame
+    cv2.imshow("Frame", frame)
+    key = cv2.waitKey(1) & 0xFF
+    # if the `q` key was pressed, break from the loop
+    if key == ord("q"):
+        break
+# do a bit of cleanup
+cv2.destroyAllWindows()
+vs.stop()

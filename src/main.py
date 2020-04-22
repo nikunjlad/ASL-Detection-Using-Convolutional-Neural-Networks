@@ -93,7 +93,8 @@ class Main(DataGen):
         # loading data
         data_path = os.path.join(self.config["DATALOADER"]["DATA_DIR"], "data/asl/alphabets.h5")
         output_path = os.path.join("output/", self.config["DATALOADER"]["OUTPUT_PATH"])
-        os.mkdir(output_path)
+        if not os.path.exists(output_path):
+            os.mkdir(output_path)
 
         self.load_data_from_h5(data_path)
         self.split_data()
